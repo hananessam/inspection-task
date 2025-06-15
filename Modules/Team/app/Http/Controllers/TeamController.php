@@ -4,53 +4,26 @@ namespace Modules\Team\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Modules\Team\Http\Requests\CreateTeamRequest;
+use Modules\Team\Services\TeamService;
+use Modules\Team\Transformers\TeamResource;
 
 class TeamController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function __construct(private TeamService $teamService)
     {
-        return view('team::index');
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Store a new team.
      */
-    public function create()
+    public function store(CreateTeamRequest $request)
     {
-        return view('team::create');
+        $team = $this->teamService->create($request->validated());
+
+        return response()->json([
+            'message' => __('tenant.team.created'),
+            'team' => TeamResource::make($team),
+        ], 201);
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request) {}
-
-    /**
-     * Show the specified resource.
-     */
-    public function show($id)
-    {
-        return view('team::show');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
-    {
-        return view('team::edit');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id) {}
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id) {}
 }
