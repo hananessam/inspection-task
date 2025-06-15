@@ -17,4 +17,21 @@ class UserRepository implements UserInterface
     {
         return User::create($data);
     }
+
+    /**
+     * Find a user by their email.
+     *
+     * @param string $email
+     * @return User|null
+     */
+    public function findByEmail(string $email, $withTenant = false): ?User
+    {
+        $query = User::where('email', $email);
+
+        if ($withTenant) {
+            $query->with('tenant');
+        }
+
+        return $query->first();
+    }
 }

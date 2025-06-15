@@ -4,6 +4,7 @@ namespace Modules\Auth\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Modules\Auth\Http\Requests\LoginRequest;
 use Modules\Auth\Http\Requests\RegisterRequest;
 use Modules\Auth\Services\AuthService;
 use Modules\User\Transformers\UserResource;
@@ -38,5 +39,28 @@ class AuthController extends Controller
         return response()->json([
             'message' => __('auth.registered'),
         ], 201);
+    }
+
+    /**
+     * Login a user.
+     * @param LoginRequest $request
+     * @return \Illuminate\Http\Response
+     */
+    public function login(LoginRequest $request)
+    {
+        $validated = $request->validated();
+
+        $user = $this->authService->login($validated);
+        if (!$user) {
+            return response()->json([
+                'message' => __('auth.invalid_credentials'),
+            ], 401);
+        }
+
+        return response()->json([
+            'message' => __('auth.logged_in'),
+            'token' => $user['token'],
+            'user' => new UserResource($user['user']),
+        ]);
     }
 }

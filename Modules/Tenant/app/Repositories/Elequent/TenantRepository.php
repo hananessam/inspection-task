@@ -17,4 +17,24 @@ class TenantRepository implements TenantInterface
     {
         return Tenant::create($data);
     }
+
+    /**
+     * Forget the current tenant.
+     * @return void
+     */
+    public function forgetCurrent(): void
+    {
+        Tenant::forgetCurrent();
+    }
+
+    /**
+     * Set the current tenant.
+     *
+     * @param Tenant $tenant
+     * @return void
+     */
+    public function setCurrent(Tenant $tenant): void
+    {
+        $tenant->makeCurrent();
+    }
 }

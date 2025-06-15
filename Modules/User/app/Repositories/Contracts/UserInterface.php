@@ -13,4 +13,12 @@ interface UserInterface
      * @return mixed
      */
     public function create(array $data): User;
+
+    /**
+     * Find a user by their email.
+     *
+     * @param string $email
+     * @return User|null
+     */
+    public function findByEmail(string $email, bool $withTenant = false): ?User;
 }
