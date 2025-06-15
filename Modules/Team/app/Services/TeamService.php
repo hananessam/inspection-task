@@ -5,6 +5,7 @@ namespace Modules\Team\Services;
 use Modules\Team\Repositories\Contracts\TeamInterface;
 use Modules\Team\Models\Team;
 use Modules\Tenant\Repositories\Contracts\TenantInterface;
+use Illuminate\Database\Eloquent\Collection;
 
 class TeamService
 {
@@ -29,5 +30,17 @@ class TeamService
         $data['tenant_id'] = $tenant->id;
 
         return $this->teamInterface->create($data);
+    }
+
+    /**
+     * Get teams by tenant ID or current tenant.
+     *
+     * @param int|null $tenantId
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getTeamsByTenantId(int|null $tenantId = null): Collection
+    {
+        $tenantId ??= $this->tenantInterface->getCurrent()?->id;
+        return $this->teamInterface->getTeamsByTenantId($tenantId);
     }
 }

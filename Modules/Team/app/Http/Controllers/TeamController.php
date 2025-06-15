@@ -26,4 +26,16 @@ class TeamController extends Controller
             'team' => TeamResource::make($team),
         ], 201);
     }
+
+    /**
+     * Get teams by tenant ID.
+     */
+    public function index(Request $request)
+    {
+        $teams = $this->teamService->getTeamsByTenantId();
+
+        return response()->json([
+            'teams' => TeamResource::collection($teams),
+        ]);
+    }
 }
