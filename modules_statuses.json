@@ -1,5 +1,6 @@
 {
     "Auth": true,
     "Tenant": true,
-    "User": true
+    "User": true,
+    "Team": true
 }
