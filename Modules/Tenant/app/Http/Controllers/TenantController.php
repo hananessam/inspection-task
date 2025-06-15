@@ -4,53 +4,36 @@ namespace Modules\Tenant\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Modules\Tenant\Repositories\Contracts\TenantInterface;
+use Modules\Tenant\Transformers\TenantResource;
 
 class TenantController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * TenantController constructor.
      */
-    public function index()
+    public function __construct(private TenantInterface $tenantRepository)
     {
-        return view('tenant::index');
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Get the current tenant.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function create()
+    public function currentTenant(Request $request)
     {
-        return view('tenant::create');
+        $tenant = $this->tenantRepository->getCurrent();
+
+        if (!$tenant) {
+            return response()->json(['message' => __('tenant.not_found')], 404);
+        }
+
+        $tenant->load('user');
+
+        return response()->json([
+            'tenant' => TenantResource::make($tenant),
+        ]);
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request) {}
-
-    /**
-     * Show the specified resource.
-     */
-    public function show($id)
-    {
-        return view('tenant::show');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
-    {
-        return view('tenant::edit');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id) {}
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id) {}
 }

@@ -37,4 +37,14 @@ class TenantRepository implements TenantInterface
     {
         $tenant->makeCurrent();
     }
+
+    /**
+     * Get the current tenant.
+     *
+     * @return Tenant|null
+     */
+    public function getCurrent(): ?Tenant
+    {
+        return Tenant::current();
+    }
 }

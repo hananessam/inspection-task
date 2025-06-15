@@ -28,4 +28,11 @@ interface TenantInterface
      * @return void
      */
     public function setCurrent(Tenant $tenant): void;
+
+    /**
+     * Get the current tenant.
+     *
+     * @return Tenant|null
+     */
+    public function getCurrent(): ?Tenant;
 }
