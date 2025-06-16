@@ -3,6 +3,7 @@
 namespace Modules\Team\Repositories\Contracts;
 
 use Modules\Team\Models\TeamAvailability;
+use Illuminate\Database\Eloquent\Collection;
 
 interface TeamAvailabilityInterface
 {
@@ -29,4 +30,12 @@ interface TeamAvailabilityInterface
      * @return bool
      */
     public function deleteByTeamId(int $teamId): bool;
+
+    /**
+     * Get all availabilities for a specific team.
+     *
+     * @param int $teamId
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getByTeamId(int $teamId): Collection;
 }

@@ -4,7 +4,7 @@ namespace Modules\Team\Repositories\Elequent;
 
 use Modules\Team\Models\TeamAvailability;
 use Modules\Team\Repositories\Contracts\TeamAvailabilityInterface;
-use Modules\Team\Enums\DayOfWeekEnum;
+use Illuminate\Database\Eloquent\Collection;
 
 class TeamAvailabilityRepository implements TeamAvailabilityInterface
 {
@@ -39,5 +39,16 @@ class TeamAvailabilityRepository implements TeamAvailabilityInterface
     public function deleteByTeamId(int $teamId): bool
     {
         return TeamAvailability::where('team_id', $teamId)->delete();
+    }
+
+    /**
+     * Get all availabilities for a specific team.
+     *
+     * @param int $teamId
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getByTeamId(int $teamId): Collection
+    {
+        return TeamAvailability::where('team_id', $teamId)->get();
     }
 }

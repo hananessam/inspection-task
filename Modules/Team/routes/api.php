@@ -14,3 +14,8 @@ Route::middleware(['auth:sanctum', 'tenant'])->prefix('v1')->group(function () {
     Route::post('teams/{team}/availabilities', [TeamAvailabilityController::class, 'storeAvailabilities'])
         ->name('team.availability.store');
 });
+
+Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
+    Route::get('teams/{team}/generate-slots', [TeamAvailabilityController::class, 'generateSlots'])
+        ->name('team.availability.generate_slots');
+});

@@ -5,6 +5,8 @@ namespace Modules\Team\Services;
 use DB;
 use Modules\Team\Repositories\Contracts\TeamAvailabilityInterface;
 use Modules\Team\Enums\DayOfWeekEnum;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 
 class TeamAvailabilityService
 {
@@ -32,6 +34,46 @@ class TeamAvailabilityService
         });
 
         return true;
+    }
+
+    /**
+     * Generate slots for a team's availability.
+     *
+     * @param int $teamId
+     * @return array
+     */
+    public function generateSlots(int $teamId, Carbon $from, Carbon $to): array
+    {
+        $availabilities = $this->teamAvailabilityInterface->getByTeamId($teamId)->groupBy('day_of_week');
+
+        if ($availabilities->isEmpty()) {
+            return []; // No availabilities
+        }
+
+        $slots = [];
+        foreach (CarbonPeriod::create($from, $to) as $date) {
+            $day = $date->dayOfWeek;
+            $slotsForDay = $availabilities[$day] ?? [];
+
+            foreach ($slotsForDay as $slot) {
+                $start = Carbon::createFromTimeString($slot->start_time)->setDateFrom($date);
+                $end   = Carbon::createFromTimeString($slot->end_time)->setDateFrom($date);
+    
+                while ($start->lt($end)) {
+                    $slotStart = $start->copy();
+                    $slotEnd   = $start->copy()->addHour();
+    
+                    $slots[] = [
+                        'date' => $slotStart->toDateString(),
+                        'start_time' => $slotStart->format('H:i'),
+                        'end_time' => $slotEnd->format('H:i'),
+                    ];
+    
+                    $start->addHour();
+                }
+            }
+        }
+        return $slots;
     }
 
     /**
