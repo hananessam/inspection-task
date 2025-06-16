@@ -25,6 +25,12 @@ class BookingController extends Controller
 
         $booking = $this->bookingService->createBooking($validatedData);
 
+        if (!$booking) {
+            return response()->json([
+                'message' => __('booking.slot_already_booked'),
+            ], 400);
+        }
+
         return response()->json([
             'message' => __('booking.created'),
         ], 201);
