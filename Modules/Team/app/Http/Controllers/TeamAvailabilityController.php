@@ -8,6 +8,7 @@ use Modules\Team\Http\Requests\CreateTeamAvailabilityRequest;
 use Modules\Team\Services\TeamAvailabilityService;
 use Modules\Team\Services\TeamService;
 use Modules\Tenant\Services\TenantService;
+use Modules\Team\Models\Team;
 
 class TeamAvailabilityController extends Controller
 {
@@ -26,6 +27,12 @@ class TeamAvailabilityController extends Controller
     {
         $team = $this->getAuthorizedTeam((int) $teamId);
 
+        if (!$team) {
+            return response()->json([
+                'message' => __('tenant.team.unauthorized'),
+            ], 403);
+        }
+
         $this->teamAvailabilityService->createPluck($request->validated()['availabilities'], $team->id);
 
         return response()->json([
@@ -35,16 +42,19 @@ class TeamAvailabilityController extends Controller
 
     /**
      * Helper method to get team and ensure it belongs to current tenant.
+     *
+     * @param int $teamId
+     * @return \Modules\Team\Models\Team|null
      */
-    protected function getAuthorizedTeam(int $teamId)
+    protected function getAuthorizedTeam(int $teamId): Team|null
     {
         $team = $this->teamService->getById($teamId);
 
-        $this->teamService->checkIfTeamBelongsToTenant(
+        $belongsToTenant = $this->teamService->checkIfTeamBelongsToTenant(
             $team,
             $this->tenantService->getCurrent()?->id
         );
 
-        return $team;
+        return $belongsToTenant ? $team : null;
     }
 }
