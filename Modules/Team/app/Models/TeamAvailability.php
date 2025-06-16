@@ -21,7 +21,7 @@ class TeamAvailability extends Model
      */
     protected $casts = [
         'day_of_week' => DayOfWeekEnum::class,
-        'start_time' => 'time',
-        'end_time' => 'time',
+        'start_time' => 'datetime:H:i',
+        'end_time' => 'datetime:H:i',
     ];
 }
