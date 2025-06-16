@@ -4,13 +4,13 @@ namespace Modules\Team\Enums;
 
 enum DayOfWeekEnum: string
 {
-    case MONDAY = '0';
-    case TUESDAY = '1';
-    case WEDNESDAY = '2';
-    case THURSDAY = '3';
-    case FRIDAY = '4';
-    case SATURDAY = '5';
-    case SUNDAY = '6';
+    case SUNDAY = '0';
+    case MONDAY = '1';
+    case TUESDAY = '2';
+    case WEDNESDAY = '3';
+    case THURSDAY = '4';
+    case FRIDAY = '5';
+    case SATURDAY = '6';
 
     public function toString(): string
     {
