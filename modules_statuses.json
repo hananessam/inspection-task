@@ -2,5 +2,6 @@
     "Auth": true,
     "Tenant": true,
     "User": true,
-    "Team": true
+    "Team": true,
+    "Booking": true
 }
