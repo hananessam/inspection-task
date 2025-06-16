@@ -21,4 +21,15 @@ class BookingService
     {
         return $this->bookingInterface->create($data);
     }
+
+    /**
+     * Get bookings by user ID.
+     *
+     * @param int $userId
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getBookingsByUserId(int $userId): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->bookingInterface->getByUserId($userId);
+    }
 }

@@ -17,4 +17,15 @@ class BookingRepository implements BookingInterface
     {
         return Booking::create($data);
     }
+
+    /**
+     * Get bookings by user ID.
+     *
+     * @param int $userId
+     * @return mixed
+     */
+    public function getByUserId(int $userId)
+    {
+        return Booking::where('user_id', $userId)->get();
+    }
 }
