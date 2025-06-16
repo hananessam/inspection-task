@@ -54,4 +54,16 @@ class TeamService
     {
         return $this->teamInterface->getById($id);
     }
+
+    /**
+     * Check if a team belongs to the current tenant.
+     *
+     * @param \Modules\Team\Models\Team $team
+     * @param int $tenantId
+     * @return bool
+     */
+    public function checkIfTeamBelongsToTenant(Team $team, int $tenantId): bool
+    {
+        return $team->tenant_id === $tenantId;
+    }
 }

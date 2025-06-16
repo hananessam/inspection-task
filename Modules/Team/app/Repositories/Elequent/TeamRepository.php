@@ -38,6 +38,6 @@ class TeamRepository implements TeamInterface
      */
     public function getById(int $id): ?Team
     {
-        return Team::find($id);
+        return Team::findOrFail($id);
     }
 }

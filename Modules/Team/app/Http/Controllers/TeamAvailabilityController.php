@@ -24,26 +24,27 @@ class TeamAvailabilityController extends Controller
      */
     public function storeAvailabilities(CreateTeamAvailabilityRequest $request, int|string $teamId)
     {
-        $team = $this->teamService->getById((int) $teamId);
+        $team = $this->getAuthorizedTeam((int) $teamId);
 
-        // Validate that the team exists.
-        if (!$team) {
-            return response()->json([
-                'message' => __('team.team.not_found'),
-            ], 422);
-        }
-
-        // Validate that the team belongs to the current tenant.
-        if ($team->tenant_id !== $this->tenantService->getCurrent()?->id) {
-            return response()->json([
-                'message' => __('team.team.not_belongs_to_current_tenant'),
-            ], 403);
-        }
-
-        $this->teamAvailabilityService->createPluck($request->validated()['availabilities'], (int) $teamId);
+        $this->teamAvailabilityService->createPluck($request->validated()['availabilities'], $team->id);
 
         return response()->json([
             'message' => __('tenant.team.availability.created'),
         ], 201);
+    }
+
+    /**
+     * Helper method to get team and ensure it belongs to current tenant.
+     */
+    protected function getAuthorizedTeam(int $teamId)
+    {
+        $team = $this->teamService->getById($teamId);
+
+        $this->teamService->checkIfTeamBelongsToTenant(
+            $team,
+            $this->tenantService->getCurrent()?->id
+        );
+
+        return $team;
     }
 }
