@@ -7,10 +7,12 @@ use Modules\Team\Repositories\Contracts\TeamAvailabilityInterface;
 use Modules\Team\Enums\DayOfWeekEnum;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
+use Modules\Booking\Repositories\Contracts\BookingInterface;
 
 class TeamAvailabilityService
 {
-    public function __construct(private TeamAvailabilityInterface $teamAvailabilityInterface) {
+    public function __construct(private TeamAvailabilityInterface $teamAvailabilityInterface, private BookingInterface $bookingInterface)
+    {
     }
 
     /**
@@ -46,6 +48,8 @@ class TeamAvailabilityService
     {
         $availabilities = $this->teamAvailabilityInterface->getByTeamId($teamId)->groupBy('day_of_week');
 
+        $bookedSlots = $this->bookingInterface->getByTeamId($teamId, $from, $to);
+
         if ($availabilities->isEmpty()) {
             return []; // No availabilities
         }
@@ -62,12 +66,20 @@ class TeamAvailabilityService
                 while ($start->lt($end)) {
                     $slotStart = $start->copy();
                     $slotEnd   = $start->copy()->addHour();
-    
-                    $slots[] = [
-                        'date' => $slotStart->toDateString(),
-                        'start_time' => $slotStart->format('H:i'),
-                        'end_time' => $slotEnd->format('H:i'),
-                    ];
+
+                    $isBooked = $bookedSlots
+                        ->where('date', $slotStart->format('Y-m-d'))
+                        ->where('start_time', $slotStart->format('H:i:s'))
+                        ->where('end_time', $slotEnd->format('H:i:s'))
+                        ->count();
+
+                    if (!$isBooked) {
+                        $slots[] = [
+                            'date' => $slotStart->toDateString(),
+                            'start_time' => $slotStart->format('H:i'),
+                            'end_time' => $slotEnd->format('H:i'),
+                        ];
+                    }
     
                     $start->addHour();
                 }

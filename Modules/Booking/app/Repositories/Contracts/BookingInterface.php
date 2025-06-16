@@ -3,6 +3,7 @@
 namespace Modules\Booking\Repositories\Contracts;
 
 use Modules\Booking\Models\Booking;
+use Carbon\Carbon;
 
 interface BookingInterface
 {
@@ -29,4 +30,14 @@ interface BookingInterface
      * @return mixed
      */
     public function delete(int $bookingId);
+
+    /**
+     * Get bookings by team ID.
+     *
+     * @param int $teamId
+     * @param \Carbon\Carbon|null $from
+     * @param \Carbon\Carbon|null $to
+     * @return mixed
+     */
+    public function getByTeamId(int $teamId, Carbon|null $from = null, Carbon|null $to = null);
 }
