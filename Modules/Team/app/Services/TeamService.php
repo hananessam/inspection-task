@@ -43,4 +43,15 @@ class TeamService
         $tenantId ??= $this->tenantInterface->getCurrent()?->id;
         return $this->teamInterface->getTeamsByTenantId($tenantId);
     }
+
+    /**
+     * Get a team by its ID.
+     *
+     * @param int $id
+     * @return \Modules\Team\Models\Team|null
+     */
+    public function getById(int $id): ?Team
+    {
+        return $this->teamInterface->getById($id);
+    }
 }

@@ -22,4 +22,12 @@ interface TeamInterface
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getTeamsByTenantId(int $tenantId): Collection;
+
+    /**
+     * Get a team by its ID.
+     *
+     * @param int $id
+     * @return Team|null
+     */
+    public function getById(int $id): ?Team;
 }

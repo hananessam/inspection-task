@@ -29,4 +29,15 @@ class TeamRepository implements TeamInterface
     {
         return Team::where('tenant_id', $tenantId)->get();
     }
+
+    /**
+     * Get a team by its ID.
+     *
+     * @param int $id
+     * @return Team|null
+     */
+    public function getById(int $id): ?Team
+    {
+        return Team::find($id);
+    }
 }

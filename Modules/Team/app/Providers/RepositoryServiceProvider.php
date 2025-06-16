@@ -5,6 +5,8 @@ namespace Modules\Team\Providers;
 use Illuminate\Support\ServiceProvider;
 use Modules\Team\Repositories\Elequent\TeamRepository;
 use Modules\Team\Repositories\Contracts\TeamInterface;
+use Modules\Team\Repositories\Elequent\TeamAvailabilityRepository;
+use Modules\Team\Repositories\Contracts\TeamAvailabilityInterface;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -14,6 +16,7 @@ class RepositoryServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(TeamInterface::class, TeamRepository::class);
+        $this->app->bind(TeamAvailabilityInterface::class, TeamAvailabilityRepository::class);
     }
 
     /**
