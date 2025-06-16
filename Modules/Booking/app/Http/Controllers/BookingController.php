@@ -44,4 +44,22 @@ class BookingController extends Controller
             'data' => BookingResource::collection($bookings),
         ]);
     }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $booking
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function destroy(Request $request, $booking)
+    {
+        $booking = $this->bookingService->getBookingsByUserId(auth()->id())
+            ->findOrFail($booking);
+
+        $this->bookingService->deleteById($booking->id);
+
+        return response()->json([
+            'message' => __('booking.deleted'),
+        ]);
+    }
 }

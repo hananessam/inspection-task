@@ -28,4 +28,15 @@ class BookingRepository implements BookingInterface
     {
         return Booking::where('user_id', $userId)->get();
     }
+
+    /**
+     * Delete a booking by ID.
+     *
+     * @param int $bookingId
+     * @return mixed
+     */
+    public function delete(int $bookingId)
+    {
+        return Booking::destroy($bookingId);
+    }
 }

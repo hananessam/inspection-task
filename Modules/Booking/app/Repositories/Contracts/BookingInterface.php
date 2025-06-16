@@ -21,4 +21,12 @@ interface BookingInterface
      * @return mixed
      */
     public function getByUserId(int $userId);
+
+    /**
+     * Delete a booking by ID.
+     *
+     * @param int $bookingId
+     * @return mixed
+     */
+    public function delete(int $bookingId);
 }

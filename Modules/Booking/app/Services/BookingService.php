@@ -32,4 +32,15 @@ class BookingService
     {
         return $this->bookingInterface->getByUserId($userId);
     }
+
+    /**
+     * Delete a booking by ID.
+     *
+     * @param int $bookingId
+     * @return void
+     */
+    public function deleteById(int $bookingId): void
+    {
+        $this->bookingInterface->delete($bookingId);
+    }
 }
