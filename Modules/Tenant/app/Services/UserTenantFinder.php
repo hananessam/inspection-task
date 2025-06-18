@@ -17,8 +17,10 @@ class UserTenantFinder extends BaseTenantFinder
      */
     public function findForRequest(Request $request): ?IsTenant
     {
-        $requestUserTenant = Auth::guard('sanctum')->user()->tenant;
+        $requestUserTenant = Auth::guard('sanctum')->user()?->tenant;
 
-        return app(IsTenant::class)::whereId($requestUserTenant?->id)->first();
+        return $requestUserTenant
+            ? app(IsTenant::class)::whereId($requestUserTenant?->id)->first()
+            : null;
     }
 }
