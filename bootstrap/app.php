@@ -29,5 +29,11 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        $exceptions->renderable(function (Throwable $exception, $request) {
+            if ($exception instanceof \Spatie\Multitenancy\Exceptions\NoCurrentTenant) {
+                return response()->json([
+                    'message' => __('tenant.unauthorized'),
+                ], 403);
+            }
+        });
     })->create();
