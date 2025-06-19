@@ -31,3 +31,8 @@ php artisan key:generate
 php artisan migrate
 
 php artisan db:seed
+
+php artisan module:seed Tenant Team
+```
+## 🌐 Usage
+login as `admin@example.com` with password `password`
