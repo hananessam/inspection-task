@@ -11,6 +11,9 @@ class TeamDatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // $this->call([]);
+        $this->call([
+            TeamSeeder::class,
+            TeamAvailabilitySeeder::class,
+        ]);
     }
 }
