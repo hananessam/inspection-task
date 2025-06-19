@@ -46,46 +46,67 @@ class TeamAvailabilityService
      */
     public function generateSlots(int $teamId, Carbon $from, Carbon $to): array
     {
-        $availabilities = $this->teamAvailabilityInterface->getByTeamId($teamId)->groupBy('day_of_week');
+        $groupedAvailabilities = $this->getGroupedAvailabilitiesByDay($teamId);
+        if ($groupedAvailabilities->isEmpty()) {
+            return [];
+        }
 
         $bookedSlots = $this->bookingInterface->getByTeamId($teamId, $from, $to);
+        $availableSlots = [];
 
-        if ($availabilities->isEmpty()) {
-            return []; // No availabilities
-        }
-
-        $slots = [];
         foreach (CarbonPeriod::create($from, $to) as $date) {
-            $day = $date->dayOfWeek;
-            $slotsForDay = $availabilities[$day] ?? [];
+            $dayOfWeek = $date->dayOfWeek;
+            $dailyAvailabilities = $groupedAvailabilities[$dayOfWeek] ?? [];
 
-            foreach ($slotsForDay as $slot) {
-                $start = Carbon::createFromTimeString($slot->start_time)->setDateFrom($date);
-                $end   = Carbon::createFromTimeString($slot->end_time)->setDateFrom($date);
-    
-                while ($start->lt($end)) {
-                    $slotStart = $start->copy();
-                    $slotEnd   = $start->copy()->addHour();
-
-                    $isBooked = $bookedSlots
-                        ->where('date', $slotStart->format('Y-m-d'))
-                        ->where('start_time', $slotStart->format('H:i:s'))
-                        ->where('end_time', $slotEnd->format('H:i:s'))
-                        ->count();
-
-                    if (!$isBooked) {
-                        $slots[] = [
-                            'date' => $slotStart->toDateString(),
-                            'start_time' => $slotStart->format('H:i'),
-                            'end_time' => $slotEnd->format('H:i'),
-                        ];
-                    }
-    
-                    $start->addHour();
-                }
+            foreach ($dailyAvailabilities as $availability) {
+                $availableSlots = array_merge(
+                    $availableSlots,
+                    $this->generateDailySlots($availability, $date, $bookedSlots)
+                );
             }
         }
+
+        return $availableSlots;
+    }
+
+    private function getGroupedAvailabilitiesByDay(int $teamId): \Illuminate\Support\Collection
+    {
+        return $this->teamAvailabilityInterface
+            ->getByTeamId($teamId)
+            ->groupBy('day_of_week');
+    }
+
+    private function generateDailySlots($availability, Carbon $date, $bookedSlots): array
+    {
+        $slots = [];
+
+        $startTime = Carbon::createFromTimeString($availability->start_time)->setDateFrom($date);
+        $endTime = Carbon::createFromTimeString($availability->end_time)->setDateFrom($date);
+
+        while ($startTime->lt($endTime)) {
+            $slotEnd = $startTime->copy()->addHour();
+
+            if (!$this->isSlotBooked($startTime, $slotEnd, $bookedSlots)) {
+                $slots[] = [
+                    'date' => $startTime->toDateString(),
+                    'start_time' => $startTime->format('H:i'),
+                    'end_time' => $slotEnd->format('H:i'),
+                ];
+            }
+
+            $startTime->addHour();
+        }
+
         return $slots;
+    }
+
+    private function isSlotBooked(Carbon $start, Carbon $end, $bookedSlots): bool
+    {
+        return $bookedSlots
+            ->where('date', $start->format('Y-m-d'))
+            ->where('start_time', $start->format('H:i:s'))
+            ->where('end_time', $end->format('H:i:s'))
+            ->isNotEmpty();
     }
 
     /**
