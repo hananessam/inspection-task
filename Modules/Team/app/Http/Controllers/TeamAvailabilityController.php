@@ -26,15 +26,7 @@ class TeamAvailabilityController extends Controller
      */
     public function storeAvailabilities(CreateTeamAvailabilityRequest $request, int|string $teamId)
     {
-        $team = $this->getAuthorizedTeam((int) $teamId);
-
-        if (!$team) {
-            return response()->json([
-                'message' => __('tenant.team.unauthorized'),
-            ], 403);
-        }
-
-        $this->teamAvailabilityService->createPluck($request->validated()['availabilities'], $team->id);
+        $this->teamAvailabilityService->createPluck($request->validated()['availabilities'], $teamId);
 
         return response()->json([
             'message' => __('tenant.team.availability.created'),
