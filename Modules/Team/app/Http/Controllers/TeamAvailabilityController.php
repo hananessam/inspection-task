@@ -49,16 +49,8 @@ class TeamAvailabilityController extends Controller
      */
     public function generateSlots(Request $request, int|string $teamId)
     {
-        $team = $this->getAuthorizedTeam((int) $teamId);
-
-        if (!$team) {
-            return response()->json([
-                'message' => __('tenant.team.unauthorized'),
-            ], 403);
-        }
-
         $slots = $this->teamAvailabilityService->generateSlots(
-            $team->id,
+            $teamId,
             Carbon::parse($request->from),
             Carbon::parse($request->to)
         );
@@ -69,23 +61,5 @@ class TeamAvailabilityController extends Controller
                 'slots' => $slots,
             ],
         ], 200);
-    }
-
-    /**
-     * Helper method to get team and ensure it belongs to current tenant.
-     *
-     * @param int $teamId
-     * @return \Modules\Team\Models\Team|null
-     */
-    protected function getAuthorizedTeam(int $teamId): Team|null
-    {
-        $team = $this->teamService->getById($teamId);
-
-        $belongsToTenant = $this->teamService->checkIfTeamBelongsToTenant(
-            $team,
-            $this->tenantService->getCurrent()?->id
-        );
-
-        return $belongsToTenant ? $team : null;
     }
 }
